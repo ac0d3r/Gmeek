@@ -459,7 +459,8 @@ class GMEEK():
         print("====== start create static html ======")
         self.cleanFile()
 
-        issues = self.repo.get_issues()
+        issues = [issue for issue in self.repo.get_issues(
+            state="all") if issue.user.login == self.repo.owner.login]
         for issue in issues:
             self.addOnePostJson(issue)
 
@@ -476,14 +477,15 @@ class GMEEK():
     def runOne(self, number_str):
         print("====== start create static html ======")
         issue = self.repo.get_issue(int(number_str))
-        if issue.state == "open":
+
+        if not self.repo.owner.login == issue.owner.login:
+            print("====== The issue was not created by the repo owner ======")
+        else:
             listJsonName = self.addOnePostJson(issue)
             self.createPostHtml(self.blogBase[listJsonName]["P"+number_str])
             self.createPlistHtml()
             self.createFeedXml()
             print("====== create static html end ======")
-        else:
-            print("====== issue is closed ======")
 
     def createFileName(self, issue, useLabel=False):
         if useLabel == True:
