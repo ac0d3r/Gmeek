@@ -478,7 +478,7 @@ class GMEEK():
         print("====== start create static html ======")
         issue = self.repo.get_issue(int(number_str))
 
-        if not self.repo.owner.login == issue.owner.login:
+        if not self.repo.owner.login == issue.user.login:
             print("====== The issue was not created by the repo owner ======")
         else:
             listJsonName = self.addOnePostJson(issue)
