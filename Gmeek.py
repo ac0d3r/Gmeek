@@ -140,6 +140,12 @@ class GMEEK():
         env = Environment(loader=file_loader)
         template = env.get_template(template)
         output = template.render(blogBase=blogBase,postListJson=postListJson,i18n=self.i18n,IconList=icon)
+
+        # fix bug FileNotFoundError: [Errno 2] No such file or directory: 'docs/post/*'
+        basedir = os.path.dirname(htmlDir)
+        if not os.path.exists(basedir):
+            os.mkdir(basedir)
+        
         f = open(htmlDir, 'w', encoding='UTF-8')
         f.write(output)
         f.close()
@@ -441,6 +447,10 @@ class GMEEK():
                 fileName=str(translit(issue.title, language_code='ru', reversed=True)).replace(' ', '-')
             else:
                 fileName=Pinyin().get_pinyin(issue.title)
+        
+        # When i18n is set to EN, file names are converted to lowercase, and spaces are replaced with '-'
+        if self.blogBase["i18n"]=="EN":
+            fileName=issue.title.strip().lower().replace(' ', '-')
         
         fileName=re.sub(r'[<>:/\\|?*\"]|[\0-\31]', '-', fileName)
         return fileName
